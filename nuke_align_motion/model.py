@@ -1,5 +1,7 @@
+# import built-in modules
 import math
 
+# Import third party modules
 import nuke
 
 
@@ -23,12 +25,10 @@ def align_nodes(direction, angle, h_direction, v_direction):
             reference = edges['south']
         align_vertical(reference, nodes)
     else:
-        pass
-    print angle
+        align_diagonal(nodes, edges, h_direction, v_direction, abs(angle))
 
 
 def align_horizontal(reference, nodes):
-
     for node in nodes:
         node.knob('ypos').setValue(reference.ypos())
 
@@ -48,9 +48,9 @@ def align_diagonal(nodes, edges, h_direction, v_direction, angle):
 
     for node in selection:
         if node is not x_start:
-            ankathete = abs(node.xpos() - x_start.xpos())
-            vertical_distance = ankathete * math.tan(angle)
-            node['ypos'].setValue(node.ypos() + vertical_distance)
+            ankathete = abs(abs(x_start.xpos()) - abs(node.xpos()))
+            gegenkathete = abs(math.sin(45) * abs(ankathete))
+            node['ypos'].setValue(x_start.ypos() - (gegenkathete * v_direction))
 
 
 def get_direction(start_pos, end_pos):
