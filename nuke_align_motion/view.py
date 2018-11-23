@@ -1,5 +1,11 @@
+
+# Import third party modules
 from PySide2 import QtWidgets, QtGui, QtCore
-from operator import mul
+
+from nuke_align_motion import settings
+
+reload(settings)
+
 
 class Interface(QtWidgets.QWidget):
     trigger = QtCore.Signal(object)
@@ -40,38 +46,37 @@ class Interface(QtWidgets.QWidget):
 
     def paintEvent(self, event):
         painter = self.get_painter()
-        size = 5
 
-        points = (QtCore.QPoint(self.start.x() - size, self.start.y() - size),
-                  QtCore.QPoint(self.start.x() + size, self.start.y() + size),
-                  QtCore.QPoint(self.end.x() + size, self.end.y() + size),
-                  QtCore.QPoint(self.end.x() - size, self.end.y() - size)
+        if self.nodegraph.hasFocus():
+            color = QtGui.QColor(*settings.COLOR_ENABLE)
+        else:
+            color = QtGui.QColor(*settings.COLOR_DRAW)
+
+        painter.fillRect(self.rect(), color)
+        self.draw_line(painter)
+
+    def draw_line(self, painter):
+        begin = 4
+        end = begin/2
+        points = (QtCore.QPoint(self.start.x() - begin, self.start.y() - begin),
+                  QtCore.QPoint(self.start.x() + begin, self.start.y() + begin),
+                  QtCore.QPoint(self.end.x() + end, self.end.y() + end),
+                  QtCore.QPoint(self.end.x() - end, self.end.y() - end)
                   )
 
         path = QtGui.QPainterPath()
         path.addPolygon(points)
         painter.fillPath(path, self._gradient())
 
-        if self.nodegraph.hasFocus():
-            color = QtGui.QColor(255, 120, 0, 70)
-        else:
-            color = QtGui.QColor(0, 120, 150, 70)
-        painter.fillRect(self.rect(), color)
-
     def _gradient(self):
-
-        length = [self.start.x() - self.end.x(), self.start.y() - self.end.y()]
-        gradient = QtGui.QRadialGradient(self.start, 200)
-        gradient.setColorAt(0, QtCore.Qt.red)
-        gradient.setColorAt(1, QtCore.Qt.black)
+        gradient = QtGui.QRadialGradient(self.start, settings.GRADIENT_WIDTH)
+        gradient.setColorAt(0, QtGui.QColor(*settings.COLOR_START))
+        gradient.setColorAt(1, QtGui.QColor(*settings.COLOR_END))
         return gradient
 
     def get_painter(self):
         painter = QtGui.QPainter(self)
         painter.setRenderHints(QtGui.QPainter.HighQualityAntialiasing)
-        pen = QtGui.QPen(QtCore.Qt.DashDotDotLine | QtCore.Qt.RoundCap)
-        pen.setWidthF(5.0)
-        painter.setPen(pen)
         return painter
 
     def keyPressEvent(self, event):

@@ -24,6 +24,7 @@ def align_nodes(direction, angle, h_direction, v_direction):
         align_vertical(reference, nodes)
     else:
         pass
+    print angle
 
 
 def align_horizontal(reference, nodes):
