@@ -1,7 +1,7 @@
 import math
 
 from nuke_align_motion import view
-from nuke_align_motion.settings import THRESHOLD
+from nuke_align_motion.settings import THRESHOLD_ANGLE
 from nuke_align_motion import model
 
 reload(view)
@@ -25,14 +25,15 @@ class Controller:
 
         angle = self.analyze_angle(start_pos, end_pos)
         alignment = self.get_alignment(angle)
-        model.align_nodes(alignment, angle, h_direction, v_direction)
+        print angle
+        model.align_nodes(alignment, h_direction, v_direction)
 
     @staticmethod
     def get_alignment(angle):
 
-        if abs(angle) < THRESHOLD:
+        if abs(angle) < THRESHOLD_ANGLE:
             direction = 'horizontal'
-        elif 90 - abs(angle) < THRESHOLD:
+        elif 90 - abs(angle) < THRESHOLD_ANGLE:
             direction = 'vertical'
         else:
             direction = 'diagonal'

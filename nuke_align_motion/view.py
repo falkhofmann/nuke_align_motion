@@ -58,15 +58,29 @@ class Interface(QtWidgets.QWidget):
     def draw_line(self, painter):
         begin = 4
         end = begin/2
-        points = (QtCore.QPoint(self.start.x() - begin, self.start.y() - begin),
-                  QtCore.QPoint(self.start.x() + begin, self.start.y() + begin),
-                  QtCore.QPoint(self.end.x() + end, self.end.y() + end),
-                  QtCore.QPoint(self.end.x() - end, self.end.y() - end)
-                  )
+        # points = (QtCore.QPoint(self.start.x() - begin, self.start.y() - begin),
+        #           QtCore.QPoint(self.start.x() + begin, self.start.y() + begin),
+        #
+        #           QtCore.QPoint(self.end.x() + end, self.end.y() + end),
+        #           QtCore.QPoint(self.end.x() - end, self.end.y() - end)
+        #           )
+        #
+        # path = QtGui.QPainterPath()
+        # path.addPolygon(points)
+        # painter.fillPath(path, self._gradient())
 
-        path = QtGui.QPainterPath()
-        path.addPolygon(points)
-        painter.fillPath(path, self._gradient())
+        pen = QtGui.QPen(self._gradient(), 5)
+        painter.setPen(pen)
+        painter.drawLine(self.start, self.end)
+
+        self._elipse(painter)
+
+    def _elipse(self, painter):
+        size = settings.ELIPSE_WIDTH
+        painter.setBrush(QtGui.QColor(*settings.COLOR_START))
+        painter.drawEllipse(self.start, size, size)
+        painter.setBrush(QtGui.QColor(*settings.COLOR_END))
+        painter.drawEllipse(self.end, size, size)
 
     def _gradient(self):
         gradient = QtGui.QRadialGradient(self.start, settings.GRADIENT_WIDTH)
@@ -77,6 +91,7 @@ class Interface(QtWidgets.QWidget):
     def get_painter(self):
         painter = QtGui.QPainter(self)
         painter.setRenderHints(QtGui.QPainter.HighQualityAntialiasing)
+        painter.setPen(QtCore.Qt.NoPen)
         return painter
 
     def keyPressEvent(self, event):
