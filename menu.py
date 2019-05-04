@@ -1,4 +1,3 @@
-
 import nuke
 
 from nuke_align_motion import controller
@@ -12,9 +11,5 @@ for menu in menubar, toolbar:
     else:
         fhofmann = menu.addMenu("fhofmann")
 
-    fhofmann.addCommand("motion align", 'align_motion()', "f3")
+    fhofmann.addCommand("motion align", 'controller.start()', "f3")
 
-
-def align_motion():
-    reload(controller)
-    controller.start()
